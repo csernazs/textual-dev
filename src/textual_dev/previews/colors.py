@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.design import ColorSystem
 from textual.widgets import Button, Footer, Label, Static, Tabs, ContentSwitcher, Markdown
+from textual.widgets._tabbed_content import ContentTab, TabPane
 from textual.color import COLOR_NAME_TO_RGB, Color
 
 
@@ -73,11 +74,11 @@ class ColorsApp(App[None]):
     BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
 
     def compose(self) -> ComposeResult:
-        yield Tabs("Design", "Named")
+        yield Tabs(ContentTab("Design", "tab-1"), ContentTab("Named", "tab-2"), active=None)
 
-        with ContentSwitcher(initial="tab-1"):
-            yield Content(ColorButtons(), id="tab-1")
-            yield NamedColorsView(id="tab-2")
+        with ContentSwitcher(initial="tab-2"):
+            yield TabPane("foo", Content(ColorButtons()), id="tab-1")
+            yield TabPane("bar", NamedColorsView(), id="tab-2")
 
         yield Footer()
 
