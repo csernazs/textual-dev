@@ -1,17 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.design import ColorSystem
-from textual.widgets import (
-    Button,
-    Footer,
-    Label,
-    Static,
-    Tabs,
-    ContentSwitcher,
-    Markdown,
-    TabbedContent,
-    TabPane,
-)
+from textual.widgets import Button, Footer, Label, Static, Tabs, ContentSwitcher, Markdown
 from textual.color import COLOR_NAME_TO_RGB, Color
 
 
@@ -83,24 +73,23 @@ class ColorsApp(App[None]):
     BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
 
     def compose(self) -> ComposeResult:
-        with TabbedContent():
-            with TabPane("Named"):
-                # yield Content(ColorButtons())
-                # yield NamedColorsView()
-                yield VerticalScroll(Markdown("*foobar*\n\n" * 100))
+        yield Tabs("Design", "Named")
+
+        with ContentSwitcher(initial="tab-1"):
+            yield Content(ColorButtons(), id="tab-1")
+            yield NamedColorsView(id="tab-2")
 
         yield Footer()
 
     def on_mount(self) -> None:
         self.call_after_refresh(self.update_view)
 
-    # def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
-    #     self.query_one(ContentSwitcher).current = event.tab.id
+    def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
+        self.query_one(ContentSwitcher).current = event.tab.id
 
     def update_view(self) -> None:
-        # content = self.query_one("Content", Content)
-        # content.mount(DesignColorsView())
-        pass
+        content = self.query_one("Content", Content)
+        content.mount(DesignColorsView())
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.query(ColorGroup).remove_class("-active")
